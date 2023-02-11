@@ -61,8 +61,9 @@ async function main() {
 		console.log("source file and env file are in sync");
 		process.exitCode = 0;
 	} else {
-		console.error(`the following env variables are missing in env file: ${missing_variables}`);
-		process.exitCode = missing_variables.length;
+		let missing_variables_text = missing_variables.map(v => `\t${v}`).join('\n');
+		let message = `the following env variables are missing in env file: \n${missing_variables_text}\n`
+		earlyExit(message, missing_variables.length);
 	}
 }
 
