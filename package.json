@@ -1,7 +1,7 @@
 {
   "name": "check-env",
   "version": "0.0.1",
-  "description": "Diffs source files that import env variables from actual .env files",
+  "description": "Check env and source files to make sure they're both on sync",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
