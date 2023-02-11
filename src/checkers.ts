@@ -1,6 +1,7 @@
 import Parser from 'tree-sitter';
 import type {DotenvParseOutput} from 'dotenv';
 const typescript = require('tree-sitter-typescript').typescript;
+const golang = require('tree-sitter-go');
 
 export abstract class IChecker {
 	protected _variables: string[] = [];
@@ -38,7 +39,28 @@ export abstract class IChecker {
 }
 
 class GoChecker extends IChecker {
-	find() {}
+	private _visit(node: Parser.SyntaxNode) {
+		if (node.type === "call_expression") {
+			let cursor = node.walk();
+			let call_expression = cursor.nodeText;
+
+			// If we're on call_expression that starts with 'os.Getenv', it means the current node
+			// is an access to an environment variable.
+			if (call_expression.startsWith("os.Getenv")) {
+				let variable = node.children[1].children[1].walk().nodeText.replace(/"/g, '');
+				this._variables.push(variable);
+				return
+			}
+		}
+
+		for (let child of node.children) {
+			this._visit(child);
+		}
+	}
+
+	find() {
+		this._visit(this._root_node);
+	}
 }
 
 class TypeScriptChecker extends IChecker {
@@ -79,7 +101,7 @@ export function getChecker(
 		case 'ts':
 			return new TypeScriptChecker(source_code, env, typescript);
 		case 'go':
-			return new GoChecker(source_code, env, typescript);
+			return new GoChecker(source_code, env, golang);
 		default:
 			return null;
 	}
