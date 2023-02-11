@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "lib",
+    "rootDir": "src",
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["node"],
+    "typeRoots": ["node_modules/**/@types", "src/@types"],
+    "baseUrl": "./"
+  },
+  "exclude": ["node_modules"]
+}
